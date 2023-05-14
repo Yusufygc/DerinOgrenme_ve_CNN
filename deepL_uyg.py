@@ -16,19 +16,10 @@ plt.show()
 
 x = img_to_array(img)
 
-#print(x.shape)
-
-
-img = load_img(train_path + "Apple Braeburn\\0_100.jpg")
-
-plt.imshow(img)
-plt.axis("off")
-plt.show()
-
-x = img_to_array(img)
 
 #print(x.shape)
 className = glob(train_path +'/*')
+
 numberOfClass = len(className)
 
 print("number Of Class : ",numberOfClass)
@@ -58,3 +49,40 @@ model.compile(loss="categorical_crossentropy",
               optimizer ="rmsprop",
               metrics =["accuracy"])
 batch_size =32 # her iterasyonda kaç resim incelenecek o miktarı ayarlamak için
+
+
+# Veri çoğaltma işlemleri -train-test
+
+#rescale 0-1 arasına çekiyor normalize etmek için
+#shear_range = kesme açısı resmi belirli bir açıyla şekillendirir.
+#zoom_range = resmi yakınlaştırır
+train_dataGen=ImageDataGenerator(rescale=1./255, 
+                   shear_range=0.3,
+                   horizontal_flip=True,
+                   zoom_range=0.3)
+
+# modelimi rescale olan veriler ile eğittimiz için test verilerini de rescale etmemiz gerekiyor.
+test_dataGen =ImageDataGenerator(rescale=1./255)
+
+#train_path içindeki klasörleri ve içlerindeki resimleri bulur ↓↓↓ calss_mode =categorical birden fazla clası var demek
+train_generator = train_dataGen.flow_from_directory(
+    train_path,
+    target_size=x.shape[:2],
+    batch_size=batch_size,
+    color_mode="rgb",
+    class_mode="categorical") 
+
+test_generator = test_dataGen.flow_from_directory(
+    test_path,
+    target_size=x.shape[:2],
+    batch_size=batch_size,
+    color_mode="rgb",
+    class_mode="categorical") 
+
+#steps_per_epoch = 1600 / batch_size = 1600 adet resim var 32 lik batch_size ile 50 tane iterasyon yapar
+model.fit_generator(
+    generator=train_generator,
+    steps_per_epoch=1600 // batch_size,
+    epochs=100,
+    validation_data=test_generator,
+    validation_steps=800 // batch_size)
