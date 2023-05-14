@@ -1,1 +1,1 @@
-# DerinOgrenmeye girii seviyesi bireysel çalışmam.Fruits-360 veri seti kullanılmıştır.
+# DerinOgrenmeye giriş seviyesi bireysel çalışmam.Fruits-360 veri seti kullanılmıştır.
