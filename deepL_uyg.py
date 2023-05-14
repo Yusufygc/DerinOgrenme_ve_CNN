@@ -80,9 +80,50 @@ test_generator = test_dataGen.flow_from_directory(
     class_mode="categorical") 
 
 #steps_per_epoch = 1600 / batch_size = 1600 adet resim var 32 lik batch_size ile 50 tane iterasyon yapar
-model.fit_generator(
+hist = model.fit_generator(
     generator=train_generator,
     steps_per_epoch=1600 // batch_size,
     epochs=100,
     validation_data=test_generator,
     validation_steps=800 // batch_size)
+
+#Model save
+
+model.save_weights("fruits_uyg.h5")
+
+#Veri görselleştirme Model Değerlendirmesi/Model Evaluation 
+
+print(hist.history.keys())
+plt.plot(hist.history["loss"],label="Train Loss")
+plt.plot(hist.history["val_loss"],label="Validation Loss")
+plt.legend()#label gösterir
+plt.show()
+
+plt.figure()# ikinci grafik için
+
+plt.plot(hist.history["Acc"],label="Train acc")
+plt.plot(hist.history["val_loss"],label="Validation Loss")
+plt.legend()#label gösterir
+plt.show()
+
+# save history
+import json
+with open("fruits_uyg.json","w") as f:
+    json.dump(hist.history,f)
+
+# load history
+import codecs
+with codecs.open("fruits_uyg.json","r",encoding="utf-8") as f:
+    h = json.loads(f.read())
+
+plt.plot(h["loss"],label="Train Loss")
+plt.plot(h["val_loss"],label="Validation Loss")
+plt.legend()#label gösterir
+plt.show()
+
+plt.figure()# ikinci grafik için
+
+plt.plot(h["Acc"],label="Train acc")
+plt.plot(h["val_loss"],label="Validation Loss")
+plt.legend()#label gösterir
+plt.show()
